@@ -1,5 +1,5 @@
 from datetime import date
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -207,6 +207,14 @@ class TestFetchCurrencies:
         response = client.post("/currencies/fetch", json={"start_date": "2024-03-15", "end_date": "2024-03-15"})
         assert response.status_code == 502
         assert "NBP API error" in response.json()["detail"]
+
+    @patch("app.routers.currencies.fetch_rates_for_date_range")
+    def test_fetch_returns_404_for_weekend_or_holiday(self, mock_fetch, client):
+        from app.services.nbp_service import NbpNoDataError
+        mock_fetch.side_effect = NbpNoDataError("Brak danych dla weekendu")
+        response = client.post("/currencies/fetch", json={"start_date": "2026-06-06", "end_date": "2026-06-06"})
+        assert response.status_code == 404
+        assert "NBP" in response.json()["detail"]
 
 
 # --- Model unit tests ---
