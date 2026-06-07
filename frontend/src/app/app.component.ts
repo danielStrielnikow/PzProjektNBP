@@ -46,8 +46,8 @@ export class AppComponent {
         this.fetchLoading = false;
         this.loadRates();
       },
-      error: () => {
-        this.errorMessage = 'Błąd podczas pobierania danych z NBP API.';
+      error: (err) => {
+        this.errorMessage = err?.error?.detail ?? 'Błąd podczas pobierania danych z NBP API.';
         this.fetchLoading = false;
       }
     });
