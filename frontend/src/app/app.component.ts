@@ -21,9 +21,25 @@ export class AppComponent {
   successMessage = '';
 
   fetchRequest: FetchRequest = {
-    start_date: '2024-01-01',
-    end_date: '2024-01-31',
+    start_date: this.lastMonday(),
+    end_date: this.lastFriday(),
   };
+
+  private lastMonday(): string {
+    const d = new Date();
+    const day = d.getDay();
+    const diff = day === 0 ? 6 : day - 1;
+    d.setDate(d.getDate() - diff - (diff === 0 ? 7 : 0));
+    return d.toISOString().slice(0, 10);
+  }
+
+  private lastFriday(): string {
+    const d = new Date();
+    const day = d.getDay();
+    const diff = day === 0 ? 2 : day <= 5 ? day + 2 : 1;
+    d.setDate(d.getDate() - diff);
+    return d.toISOString().slice(0, 10);
+  }
 
   constructor(private currencyService: CurrencyService) {}
 
