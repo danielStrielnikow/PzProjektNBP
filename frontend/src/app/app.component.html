@@ -1,0 +1,31 @@
+<div class="app-container">
+  <header>
+    <h1>Kursy Walut NBP</h1>
+    <p>Pobieranie i przeglądanie kursów walut z Narodowego Banku Polskiego</p>
+  </header>
+
+  <section class="fetch-section">
+    <h2>Pobierz dane z NBP</h2>
+    <div class="fetch-form">
+      <label>
+        Data od:
+        <input type="date" [(ngModel)]="fetchRequest.start_date" />
+      </label>
+      <label>
+        Data do:
+        <input type="date" [(ngModel)]="fetchRequest.end_date" />
+      </label>
+      <button class="btn-primary" (click)="fetchFromNbp()" [disabled]="fetchLoading">
+        {{ fetchLoading ? 'Pobieranie...' : 'Pobierz kursy walut' }}
+      </button>
+    </div>
+    <p *ngIf="successMessage" class="msg-success">{{ successMessage }}</p>
+    <p *ngIf="errorMessage" class="msg-error">{{ errorMessage }}</p>
+  </section>
+
+  <section class="data-section">
+    <h2>Kursy walut</h2>
+    <app-currency-filters (filtersChanged)="onFiltersChanged($event)" />
+    <app-currency-table [rates]="rates" [loading]="loading" />
+  </section>
+</div>

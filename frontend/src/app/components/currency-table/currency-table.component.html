@@ -1,0 +1,32 @@
+<div class="table-wrapper">
+  <div *ngIf="loading" class="loading">Ładowanie danych...</div>
+
+  <div *ngIf="!loading && rates.length === 0" class="empty">
+    Brak danych. Pobierz kursy walut klikając przycisk powyżej.
+  </div>
+
+  <table *ngIf="!loading && rates.length > 0">
+    <thead>
+      <tr>
+        <th>Waluta</th>
+        <th>Kod</th>
+        <th>Kurs (PLN)</th>
+        <th>Data</th>
+        <th>Rok</th>
+        <th>Kwartał</th>
+        <th>Miesiąc</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rate of rates">
+        <td>{{ rate.currency_name }}</td>
+        <td><strong>{{ rate.currency_code }}</strong></td>
+        <td>{{ rate.rate | number:'1.4-4' }}</td>
+        <td>{{ rate.effective_date }}</td>
+        <td>{{ rate.year }}</td>
+        <td>Q{{ rate.quarter }}</td>
+        <td>{{ rate.month }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
