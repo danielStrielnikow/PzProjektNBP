@@ -2,7 +2,9 @@
   <div *ngIf="loading" class="loading">Ładowanie danych...</div>
 
   <div *ngIf="!loading && rates.length === 0" class="empty">
-    Brak danych. Pobierz kursy walut klikając przycisk powyżej.
+    Brak danych dla wybranych kryteriów. Upewnij się, że:<br/>
+    – dane zostały pobrane z NBP (przycisk "Pobierz kursy walut"),<br/>
+    – wybrany dzień nie jest weekendem ani świętem (NBP nie publikuje kursów w te dni).
   </div>
 
   <table *ngIf="!loading && rates.length > 0">

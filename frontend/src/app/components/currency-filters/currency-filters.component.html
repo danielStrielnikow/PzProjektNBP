@@ -25,6 +25,7 @@
   <div class="filter-row">
     <label>Dzień</label>
     <input type="number" [(ngModel)]="filters.day" placeholder="1-31" min="1" max="31" />
+    <small>NBP nie publikuje kursów w weekendy i święta – dla takich dni brak wyników jest prawidłowy.</small>
   </div>
 
   <div class="filter-row">
