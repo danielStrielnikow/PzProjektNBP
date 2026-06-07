@@ -1,6 +1,8 @@
 version: "3.9"
 
 services:
+
+  # ── Baza danych ──────────────────────────────────────────────────────────────
   db:
     image: postgres:16-alpine
     environment:
@@ -17,6 +19,7 @@ services:
       timeout: 5s
       retries: 5
 
+  # ── Backend (FastAPI) ─────────────────────────────────────────────────────────
   backend:
     build: ./backend
     ports:
@@ -29,12 +32,34 @@ services:
     volumes:
       - ./backend:/app
 
+  # ── Frontend (Angular → nginx) ────────────────────────────────────────────────
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: production
     ports:
       - "4200:80"
     depends_on:
       - backend
+
+  # ── Testy backendu (pytest, SQLite in-memory) ─────────────────────────────────
+  backend-test:
+    build: ./backend
+    profiles: ["test"]
+    environment:
+      DATABASE_URL: sqlite:///./test.db
+    command: pytest tests/ -v --tb=short
+    volumes:
+      - ./backend:/app
+
+  # ── Testy frontendu (Karma + ChromeHeadless) ──────────────────────────────────
+  frontend-test:
+    build:
+      context: ./frontend
+      target: test
+    profiles: ["test"]
+    volumes:
+      - ./frontend/src:/app/src
 
 volumes:
   postgres_data:
