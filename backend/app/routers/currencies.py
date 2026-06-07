@@ -7,7 +7,7 @@ from sqlalchemy.dialects.postgresql import insert
 from app.database import get_db
 from app.models import CurrencyRate
 from app.schemas import CurrencyRateOut, FetchRequest, FetchResponse
-from app.services.nbp_service import fetch_rates_for_date_range, NbpNoDataError
+from app.services.nbp_service import fetch_rates_for_date_range, NbpNoDataError, NbpRangeTooLargeError
 
 router = APIRouter(prefix="/currencies", tags=["currencies"])
 
@@ -59,6 +59,8 @@ def fetch_and_store(payload: FetchRequest, db: Session = Depends(get_db)):
 
     try:
         rates = fetch_rates_for_date_range(payload.start_date, payload.end_date)
+    except NbpRangeTooLargeError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except NbpNoDataError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:

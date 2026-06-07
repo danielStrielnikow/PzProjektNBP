@@ -216,6 +216,18 @@ class TestFetchCurrencies:
         assert response.status_code == 404
         assert "NBP" in response.json()["detail"]
 
+    def test_fetch_returns_400_for_range_over_93_days(self, client):
+        response = client.post("/currencies/fetch", json={"start_date": "2024-01-01", "end_date": "2024-05-01"})
+        assert response.status_code == 400
+        assert "93" in response.json()["detail"]
+
+    @patch("app.routers.currencies.fetch_rates_for_date_range")
+    def test_fetch_returns_400_when_nbp_rejects_range(self, mock_fetch, client):
+        from app.services.nbp_service import NbpRangeTooLargeError
+        mock_fetch.side_effect = NbpRangeTooLargeError("Przekroczony limit NBP")
+        response = client.post("/currencies/fetch", json={"start_date": "2024-01-01", "end_date": "2024-02-01"})
+        assert response.status_code == 400
+
 
 # --- Model unit tests ---
 
